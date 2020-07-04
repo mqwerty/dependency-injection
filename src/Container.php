@@ -5,23 +5,22 @@ namespace Mqwerty\DI;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 
-final class Container implements ContainerInterface
+class Container implements ContainerInterface
 {
-    private array $config;
-    private array $container = [];
+    protected const SHARED = 'shared';
+
+    protected array $shared = [];
+    protected array $config;
 
     public function __construct(array $config = [])
     {
-        $this->config = array_merge(
-            [
-                'shared' => [],
-            ],
-            $config
-        );
-        /** @phan-suppress-next-line PhanTypeNoPropertiesForeach */
-        foreach ($this->config['shared'] as $value) {
-            $this->container[$value] = null;
+        if (isset($config[static::SHARED])) {
+            foreach ($config[static::SHARED] as $value) {
+                $this->shared[$value] = null;
+            }
+            unset($config[static::SHARED]);
         }
+        $this->config = $config;
     }
 
     public function has($id): bool
@@ -40,12 +39,12 @@ final class Container implements ContainerInterface
             if (!is_callable($this->config[$id])) {
                 return $this->config[$id];
             }
-            if (isset($this->container[$id])) {
-                return $this->container[$id];
+            if (isset($this->shared[$id])) {
+                return $this->shared[$id];
             }
-            if (array_key_exists($id, $this->container)) {
-                $this->container[$id] = call_user_func($this->config[$id], $this);
-                return $this->container[$id];
+            if (array_key_exists($id, $this->shared)) {
+                $this->shared[$id] = call_user_func($this->config[$id], $this);
+                return $this->shared[$id];
             }
             return call_user_func($this->config[$id], $this);
         }
@@ -62,7 +61,7 @@ final class Container implements ContainerInterface
      * @return mixed
      * @throws NotFoundException
      */
-    private function autowire($id)
+    protected function autowire($id)
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         $class = new ReflectionClass($id);
