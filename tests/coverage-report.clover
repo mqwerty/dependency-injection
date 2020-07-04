@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1593857878">
-  <project timestamp="1593857878">
+<coverage generated="1593859411">
+  <project timestamp="1593859411">
     <package name="Mqwerty\ServiceManager">
       <file name="/app/src/Manager.php">
         <class name="Mqwerty\ServiceManager\Manager" namespace="Mqwerty\ServiceManager">

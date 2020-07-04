@@ -31,7 +31,7 @@
   "scripts": {
     "test": "phpunit",
     "cover": "phpunit --coverage-text",
-    "cover:clover": "phpunit --coverage-clover tests/coverage.xml",
+    "cover:save": "phpunit --coverage-clover tests/coverage-report.clover --log-junit=tests/test-report.xml",
     "cover:html": "phpunit --coverage-html tmp/coverage-html",
     "stan:md": "phpmd ./src ansi ./phpmd.xml",
     "stan:phan": "phan --color --progress-bar --allow-polyfill-parser",
