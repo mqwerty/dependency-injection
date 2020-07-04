@@ -12,7 +12,7 @@ class Container implements ContainerInterface
     protected array $shared = [];
     protected array $config;
 
-    public function __construct(array $config = [])
+    public function __construct(array $config)
     {
         if (isset($config[static::SHARED])) {
             foreach ($config[static::SHARED] as $value) {
@@ -23,6 +23,10 @@ class Container implements ContainerInterface
         $this->config = $config;
     }
 
+    /**
+     * @param string $id
+     * @return bool
+     */
     public function has($id): bool
     {
         return array_key_exists($id, $this->config) || class_exists($id);
@@ -61,7 +65,7 @@ class Container implements ContainerInterface
      * @return mixed
      * @throws NotFoundException
      */
-    protected function autowire($id)
+    protected function autowire(string $id)
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         $class = new ReflectionClass($id);

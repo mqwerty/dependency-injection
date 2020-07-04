@@ -26,6 +26,6 @@ $config = [
     },
 ];
 
-$container = new Mqwerty\DI\Container();
+$container = new Mqwerty\DI\Container($config);
 $container->get(Foo::class);
 ```
