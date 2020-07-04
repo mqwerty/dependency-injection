@@ -3,4 +3,6 @@ services:
   test:
     build: .
     entrypoint: []
-    command: sh -c "composer install --no-interaction --no-progress --no-suggest && composer cs:check && composer stan:md && composer stan:phan && composer test"
+    command: sh -c "composer install --no-interaction --no-progress --no-suggest && composer cs:check && composer stan:md && composer stan:phan && composer test:ci"
+    volumes:
+      - .:/app/tmp

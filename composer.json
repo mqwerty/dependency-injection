@@ -30,9 +30,9 @@
   },
   "scripts": {
     "test": "phpunit",
-    "cover": "phpunit --coverage-text",
-    "cover:save": "phpunit --coverage-clover tests/coverage-report.clover --log-junit=tests/test-report.xml",
-    "cover:html": "phpunit --coverage-html tmp/coverage-html",
+    "test:cover": "phpunit --coverage-text",
+    "test:hcover": "phpunit --coverage-html tmp/coverage-html",
+    "test:ci": "phpunit -c ./phpunit.xml.dist --coverage-clover tmp/coverage-report.clover --log-junit=tmp/test-report.xml",
     "stan:md": "phpmd ./src ansi ./phpmd.xml",
     "stan:phan": "phan --color --progress-bar --allow-polyfill-parser",
     "cs:check": "phpcs ./src --standard=PSR12",

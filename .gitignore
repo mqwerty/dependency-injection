@@ -5,6 +5,8 @@
 # local files
 /config.php
 /codeception.yml
+/coverage-report.clover
+/test-report.xml
 
 # keep
 !.gitkeep
