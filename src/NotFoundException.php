@@ -1,6 +1,6 @@
 <?php
 
-namespace Mqwerty\ServiceManager;
+namespace Mqwerty\DI;
 
 use Exception;
 use Psr\Container\NotFoundExceptionInterface;

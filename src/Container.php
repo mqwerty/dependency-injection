@@ -1,11 +1,11 @@
 <?php
 
-namespace Mqwerty\ServiceManager;
+namespace Mqwerty\DI;
 
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 
-final class Manager implements ContainerInterface
+final class Container implements ContainerInterface
 {
     private array $config;
     private array $container = [];
@@ -44,10 +44,10 @@ final class Manager implements ContainerInterface
                 return $this->container[$id];
             }
             if (array_key_exists($id, $this->container)) {
-                $this->container[$id] = call_user_func($this->config[$id]);
+                $this->container[$id] = call_user_func($this->config[$id], $this);
                 return $this->container[$id];
             }
-            return call_user_func($this->config[$id]);
+            return call_user_func($this->config[$id], $this);
         }
 
         if (class_exists($id)) {
