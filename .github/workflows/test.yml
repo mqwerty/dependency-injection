@@ -14,6 +14,8 @@ jobs:
           mkdir tmp && chmod 0777 tmp
           docker-compose --file docker-compose.test.yml build
           docker-compose --file docker-compose.test.yml run test
+          sed -i "s%/app/%./%g" ./tmp/coverage-report.clover
+          sed -i "s%/app/%./%g" ./tmp/test-report.xml
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:
