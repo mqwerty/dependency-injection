@@ -64,7 +64,18 @@ final class ServiceManagerTest extends TestCase
         $this->assertNotSame($c->get(Foo::class), $c->get(Foo::class));
     }
 
-    public function testDI(): void
+    public function testFactoryObject(): void
+    {
+        $c = new Container(
+            [
+                SomeInterface::class => new class implements SomeInterface {
+                },
+            ]
+        );
+        $this->assertInstanceOf(SomeInterface::class, $c->get(SomeInterface::class));
+    }
+
+    public function testFactoryFn(): void
     {
         $c = new Container(
             [
@@ -72,17 +83,40 @@ final class ServiceManagerTest extends TestCase
                 },
             ]
         );
-        $this->assertInstanceOf(Baz::class, $c->get(Baz::class));
+        $this->assertInstanceOf(SomeInterface::class, $c->get(SomeInterface::class));
     }
 
-    public function testDIException(): void
+    public function testFactoryStaticFunction(): void
+    {
+        $c = new Container(
+            [
+                SomeInterface::class => static function () {
+                    return new class implements SomeInterface {
+                    };
+                },
+            ]
+        );
+        $this->assertInstanceOf(SomeInterface::class, $c->get(SomeInterface::class));
+    }
+
+    public function testFactoryStaticMethod(): void
+    {
+        $c = new Container(
+            [
+                Bar::class => [Bar::class, 'getInstanse'],
+            ]
+        );
+        $this->assertInstanceOf(Bar::class, $c->get(Bar::class));
+    }
+
+    public function testFactoryException(): void
     {
         $this->expectException(NotFoundException::class);
         $c = new Container([]);
         $c->get(Qux::class);
     }
 
-    public function testConfigDI(): void
+    public function testFactorySelfInject(): void
     {
         $c = new Container(
             [
@@ -104,6 +138,10 @@ class Foo
 
 class Bar
 {
+    public static function getInstanse(): self
+    {
+        return new static();
+    }
 }
 
 class Baz
