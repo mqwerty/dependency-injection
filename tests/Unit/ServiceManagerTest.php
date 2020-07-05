@@ -109,14 +109,36 @@ final class ServiceManagerTest extends TestCase
         $this->assertInstanceOf(Bar::class, $c->get(Bar::class));
     }
 
-    public function testFactoryException(): void
+    public function testAlias(): void
+    {
+        $c = new Container(
+            [
+                'Some' => fn() => new class implements SomeInterface {
+                },
+            ]
+        );
+        $this->assertInstanceOf(SomeInterface::class, $c->get('Some'));
+    }
+
+    public function testDI(): void
+    {
+        $c = new Container(
+            [
+                SomeInterface::class => fn() => new class implements SomeInterface {
+                },
+            ]
+        );
+        $this->assertInstanceOf(Baz::class, $c->get(Baz::class));
+    }
+
+    public function testDIException(): void
     {
         $this->expectException(NotFoundException::class);
         $c = new Container([]);
         $c->get(Qux::class);
     }
 
-    public function testFactorySelfInject(): void
+    public function testDISelfInject(): void
     {
         $c = new Container(
             [
