@@ -15,19 +15,19 @@ final class ServiceManagerTest extends TestCase
 {
     public function testConstructor(): void
     {
-        $this->assertInstanceOf(ContainerInterface::class, new Container([]));
+        $this->assertInstanceOf(ContainerInterface::class, new Container());
     }
 
     public function testGetNotFound(): void
     {
         $this->expectException(NotFoundException::class);
-        $c = new Container([]);
+        $c = new Container();
         $c->get('notFound');
     }
 
     public function testHasNotFound(): void
     {
-        $c = new Container([]);
+        $c = new Container();
         $this->assertFalse($c->has('notFound'));
     }
 
@@ -134,7 +134,7 @@ final class ServiceManagerTest extends TestCase
     public function testDIException(): void
     {
         $this->expectException(NotFoundException::class);
-        $c = new Container([]);
+        $c = new Container();
         $c->get(Qux::class);
     }
 
@@ -147,6 +147,19 @@ final class ServiceManagerTest extends TestCase
             ]
         );
         $this->assertInstanceOf(Qux::class, $c->get(Qux::class));
+    }
+
+    public function testBuild(): void
+    {
+        $c = new Container();
+        $this->assertInstanceOf(Qux::class, $c->build(Qux::class, ['s' => 'string']));
+    }
+
+    public function testBuildException(): void
+    {
+        $this->expectException(NotFoundException::class);
+        $c = new Container();
+        $this->assertInstanceOf(Qux::class, $c->build(Qux::class));
     }
 }
 

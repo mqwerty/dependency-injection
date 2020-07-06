@@ -12,7 +12,7 @@ class Container implements ContainerInterface
     protected array $shared = [];
     protected array $config;
 
-    public function __construct(array $config)
+    public function __construct(array $config = [])
     {
         if (isset($config[static::SHARED])) {
             foreach ($config[static::SHARED] as $value) {
@@ -40,50 +40,61 @@ class Container implements ContainerInterface
     public function get($id)
     {
         if (array_key_exists($id, $this->config)) {
-            if (!is_callable($this->config[$id])) {
-                return $this->config[$id];
-            }
-            if (isset($this->shared[$id])) {
-                return $this->shared[$id];
-            }
-            if (array_key_exists($id, $this->shared)) {
-                $this->shared[$id] = call_user_func($this->config[$id], $this);
-                return $this->shared[$id];
-            }
-            return call_user_func($this->config[$id], $this);
+            return $this->load($id);
         }
-
         if (class_exists($id)) {
-            return $this->autowire($id);
+            return $this->build($id);
         }
-
         throw new NotFoundException("$id not found");
     }
 
     /**
      * @param string $id
      * @return mixed
+     */
+    protected function load(string $id)
+    {
+        if (!is_callable($this->config[$id])) {
+            return $this->config[$id];
+        }
+        if (isset($this->shared[$id])) {
+            return $this->shared[$id];
+        }
+        if (array_key_exists($id, $this->shared)) {
+            $this->shared[$id] = call_user_func($this->config[$id], $this);
+            return $this->shared[$id];
+        }
+        return call_user_func($this->config[$id], $this);
+    }
+
+    /**
+     * @param string $id
+     * @param array  $params
+     * @return mixed
      * @throws NotFoundException
      */
-    protected function autowire(string $id)
+    public function build(string $id, array $params = [])
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         $class = new ReflectionClass($id);
         $constructor = $class->getConstructor();
         $args = [];
         if ($constructor) {
-            $params = $constructor->getParameters();
-            foreach ($params as $param) {
-                if ($param->isOptional()) {
-                    /** @noinspection PhpUnhandledExceptionInspection */
-                    $args[] = $param->getDefaultValue();
-                } else {
-                    $paramClass = $param->getClass();
-                    if (!$paramClass) {
-                        throw new NotFoundException("Can't resolve param '{$param->getName()}' for $id");
-                    }
-                    $args[] = $this->get($paramClass->getName());
+            foreach ($constructor->getParameters() as $p) {
+                if (isset($params[$p->getName()])) {
+                    $args[] = $params[$p->getName()];
+                    continue;
                 }
+                if ($p->isOptional()) {
+                    /** @noinspection PhpUnhandledExceptionInspection */
+                    $args[] = $p->getDefaultValue();
+                    continue;
+                }
+                $paramClass = $p->getClass();
+                if (!$paramClass) {
+                    throw new NotFoundException("Can't resolve param '{$p->getName()}' for $id");
+                }
+                $args[] = $this->get($paramClass->getName());
             }
         }
         return $class->newInstanceArgs($args);
