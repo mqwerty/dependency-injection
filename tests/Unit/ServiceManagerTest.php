@@ -103,7 +103,7 @@ final class ServiceManagerTest extends TestCase
     {
         $c = new Container(
             [
-                Bar::class => [Bar::class, 'getInstanse'],
+                Bar::class => [Bar::class, 'getInstance'],
             ]
         );
         $this->assertInstanceOf(Bar::class, $c->get(Bar::class));
@@ -160,7 +160,7 @@ class Foo
 
 class Bar
 {
-    public static function getInstanse(): self
+    public static function getInstance(): self
     {
         return new static();
     }
