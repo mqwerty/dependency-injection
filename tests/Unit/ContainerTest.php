@@ -11,7 +11,7 @@ use Mqwerty\DI\Container;
 use Mqwerty\DI\NotFoundException;
 use Psr\Container\ContainerInterface;
 
-final class ServiceManagerTest extends TestCase
+final class ContainerTest extends TestCase
 {
     public function testConstructor(): void
     {
