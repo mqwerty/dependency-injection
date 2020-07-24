@@ -13,7 +13,8 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 
-class Foo {
+class Foo
+{
     public function __construct(LoggerInterface $logger)
     {
     }
@@ -22,10 +23,9 @@ class Foo {
 $config = [
     'logLevel' => 'info',
     'shared' => [LoggerInterface::class],
-    LoggerInterface::class => static function ($c) {
-        $handler = new StreamHandler(STDERR, $c->get('logLevel'));
-        return (new Logger('log'))->pushHandler($handler);
-    },
+    LoggerInterface::class => fn($c) => (new Logger('log'))->pushHandler(
+        new StreamHandler(STDERR, $c->get('logLevel'))
+    ),
 ];
 
 $container = new Mqwerty\DI\Container($config);
