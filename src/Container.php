@@ -91,10 +91,7 @@ class Container implements ContainerInterface
                     continue;
                 }
                 $paramClass = $p->getClass();
-                if (!$paramClass) {
-                    throw new NotFoundException("Can't resolve param '{$p->getName()}' for $id");
-                }
-                $args[] = $this->get($paramClass->getName());
+                $args[] = $this->get($paramClass ? $paramClass->getName() : $p->getName());
             }
         }
         return $class->newInstanceArgs($args);

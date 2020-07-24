@@ -161,6 +161,12 @@ final class ContainerTest extends TestCase
         $c = new Container();
         $this->assertInstanceOf(Qux::class, $c->build(Qux::class));
     }
+
+    public function testParam(): void
+    {
+        $c = new Container(['s' => 'string']);
+        $this->assertInstanceOf(Qux::class, $c->get(Qux::class));
+    }
 }
 
 interface SomeInterface
