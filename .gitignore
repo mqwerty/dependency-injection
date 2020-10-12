@@ -15,6 +15,7 @@
 bash.exe.stackdump
 nohup.out
 .php_cs.cache
+.phpunit.result.cache
 
 # Editor directories and files
 .idea
